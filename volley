@@ -1,0 +1,261 @@
+VOLLEY
+
+@ Volley is an HTTP library that makes networking for ANDROID easier & Faster.
+@ Developed in Google I/O 2013.
+@ available by AOSP respository.
+@ Volley supersedes Java’s -- java.net.HttpURLConnection class 
+      and Apache’s --> org.apache.http.client 
+  in handling network requests. 
+@ can handle almost each and everything you will need to do over the network, 
+@ it handles HTTP request and also manages the async tasks.
+
+ADVANTAGE :-
+@ muliple network connections,resulting in faster and efficient network operations.
+@ request priority
+@ Automatic Scheduling of Networking request.
+@ cancel or block a request 
+@ ease of customization.
+@ easily manage UI with data fetched from network.
+@  has built in debugging and tracing tools which allow user to get to the root of the error.
+
+WORKING OF VOLLEY
+**********************
+--> While using volley you are only concerned about adding a request to the queue, handling it’s response, and you can actually ignore everything that is running in the background. 
+
+--> When you fire a network request it is added to cache queue in the priority order. A cache dispatcher thread figures out whether it can service the request entirely from the cache or it needs to fire a network request for the response.
+
+-->  In the case of a cache miss or if cached response has expired, the network dispatcher services the request, handles the parsing of the response and returns the response back to the main thread.
+
+--> Volley is very useful for network request involving strings, images, and JSON. It has built in support for these objects.
+
+1. STRING URL
+2. JSON OBJECT URL  / JSON ARRAY URL
+3. IMAGE URL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Make Project
+	@ Take Permission
+		<uses-permission android:name="android.permission.INTERNET" />
+	@ Add dependencies  --->>> 
+			'com.android.volley:volley:1.0.0'
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+STRING REQUEST :- 
+>>>>>>>>>>>>>>>>>>>>>>>
+
+download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {   
+       StringRequest  stringRequest= new StringRequest(
+	Request.Method.POST,  
+	s_url,         
+	new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        textView.setText(response);
+                    }
+                },
+         new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        textView.setText("ERROR...");
+                    }
+                });
+
+	RequestQueue requestQueue= Volley.newRequestQueue(MainActivity.this);
+	requestQueue.add(stringRequest);
+
+...................   oRRRRRRR ............................
+
+--> MySingleTon.getInstane(getApplicationContext()).addTorequestQue(StringRequest);
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+IMAGEREQUEST
+>>>>>>>>>>>>>>
+ImageRequest  imageRequest = new ImageRequest(
+	json_url, 
+	new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+
+                    }
+                }, 
+	0, 0,
+	 ImageView.ScaleType.CENTER_CROP,
+	 null,
+	 new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        
+                    }
+                });
+
+http://content6.flixster.com/movie/11/13/43/11134356_mob.jpg
+
+IMAGE_URL
+https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Starburst_in_NGC_4449_(captured_by_the_Hubble_Space_Telescope).jpg/1024px-Starburst_in_NGC_4449_(captured_by_the_Hubble_Space_Telescope).jpg
+                
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+##########################################################################################
+json object request
+*************************
+
+String url = "http://pastebin.com/raw/2bW31yqa";
+
+JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+	 Request.Method.POST, 
+	json_url, 
+	null,
+
+	 new  Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            tv.setText(response.getString("name"));
+                            tv1.setText(response.getString("empid"));
+                            tv2.setText(response.getString("password"));
+                        } 
+	    catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, 
+	new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+
+<<<<<<<<<<<<<<<<<<<<<<
+https://android--examples.blogspot.in/2017/02/android-volley-json-object-request.html
+
+##############################################################################
+
+
+JSON OBJECT REQUEST
+*******************************
+public class MainActivity extends AppCompatActivity {
+    String url = "http://pastebin.com/raw/2bW31yqa";
+    TextView tv;
+    ImageView imgg;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tv = findViewById(R.id.tv);
+        imgg = findViewById(R.id.img);
+        tv.setText("");
+    }
+    public void fun(View v) {
+        tv.setText("");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray array = response.getJSONArray("students");
+
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject student = array.getJSONObject(i);
+
+                                String firstName = student.getString("firstname");
+                                String lastName = student.getString("lastname");
+                                String age = student.getString("age");
+
+                                tv.append(firstName + " " + lastName + "\nage : " + age);
+                                tv.append("\n\n");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonObjectRequest);
+    }
+}
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+NETWORKREQUEST
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Cache  Cache  = new DiskBasicCache(getChacheDir() 1024*1024);
+Network network = new BasicNetwork(new MurlStack());
+requestQueue = new RequestQueue(Cache,network);
+requestQueue.start();
+
+download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+StringRequest stringRequest= new StringRequest(Request.Method.POST, s_url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        textView.setText(response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        textView.setText("ERROR...");
+                    }
+                });
+}
+
+######################################
+SINGLETON
+***************
+public class MySingleTon {
+    private static MySingleTon mInstance;
+    private RequestQueue requestQueue;
+    private static Context mContext;
+    
+private MySingleTon(Context context)
+    {
+        mContext=context;
+        requestQueue= getRequestQue();
+    }
+    public RequestQueue getRequestQue()
+    {
+        if (requestQueue == null)
+        {
+            requestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
+        }
+        return requestQueue;
+    }
+    public static synchronized MySingleTon getmInstance(Context context)
+    {
+        if(mInstance == null)
+        {
+            mInstance = new MySingleTon(context);
+        }
+        return mInstance;
+    }
+    public <T> void addToRequestQue(Request<T> request)
+    {
+        requestQueue.add(request);
+    }
+}
+
+MySingleTon().getInstane(getApplicationContext()).addTorequestQue(StringRequest);
+
+
+
+**********************************************
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
